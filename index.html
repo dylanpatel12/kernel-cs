@@ -82,6 +82,49 @@
   }
   .module.live .module-status{color:var(--phosphor);}
 
+  .faq-section{
+    margin-top:48px;padding-top:28px;border-top:1px solid var(--trace);
+  }
+  .faq-heading{
+    font-family:'Space Grotesk';font-size:24px;font-weight:600;line-height:1.3;
+    text-align:center;margin-bottom:6px;
+  }
+  .faq-intro{
+    color:var(--text-dim);font-size:14px;line-height:1.6;text-align:center;
+    max-width:440px;margin:0 auto 28px;
+  }
+  .faq-list{border-top:1px solid var(--trace);}
+  .faq-item{border-bottom:1px solid var(--trace);}
+  .faq-question{
+    width:100%;min-height:60px;padding:16px 4px;background:none;border:0;color:var(--text);
+    cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:20px;
+    font:inherit;text-align:left;transition:color .15s ease;
+  }
+  .faq-question:hover{color:var(--copper);}
+  .faq-question:focus-visible{outline:2px solid var(--copper);outline-offset:2px;}
+  .faq-question-text{font-size:14px;font-weight:500;line-height:1.45;}
+  .faq-icon{
+    width:9px;height:9px;border-right:1.5px solid var(--copper);border-bottom:1.5px solid var(--copper);
+    flex-shrink:0;transform:rotate(45deg);transition:transform .15s ease;
+  }
+  .faq-question[aria-expanded="true"] .faq-icon{transform:rotate(225deg);}
+  .faq-answer{color:var(--text-dim);font-size:14px;line-height:1.65;padding:0 40px 18px 4px;}
+  .faq-answer[hidden]{display:none;}
+  .ai-note{
+    background:var(--panel);border:1px solid var(--trace);border-radius:8px;
+    margin-top:24px;padding:18px 20px;
+  }
+  .ai-note-title{
+    color:var(--copper);font-family:'IBM Plex Mono';font-size:11px;font-weight:500;
+    letter-spacing:.2px;margin-bottom:7px;
+  }
+  .ai-note-text{color:var(--text-dim);font-size:13px;line-height:1.65;}
+
+  @media (max-width:480px){
+    .faq-question{min-height:64px;padding:18px 4px;}
+    .faq-answer{padding-right:4px;}
+  }
+
   footer{
     margin-top:48px;padding-top:20px;border-top:1px solid var(--trace);
     font-family:'IBM Plex Mono';font-size:11px;color:var(--text-faint);
@@ -200,11 +243,96 @@
     </div>
   </div>
 
+  <section class="faq-section" aria-labelledby="faq-heading">
+    <h2 class="faq-heading" id="faq-heading">Questions, answered</h2>
+    <p class="faq-intro">Everything you need to know before you start revising.</p>
+
+    <div class="faq-list">
+      <div class="faq-item">
+        <h3><button class="faq-question" type="button" id="faq-question-1" aria-expanded="true" aria-controls="faq-answer-1"><span class="faq-question-text">Who makes the revision content?</span><span class="faq-icon" aria-hidden="true"></span></button></h3>
+        <div class="faq-answer" id="faq-answer-1" role="region" aria-labelledby="faq-question-1">
+          <p>This site was built by a former A-level Computer Science student who knows how overwhelming the course can feel — especially when exams get close. The goal is to make revision clearer, more structured, and easier to stick with.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <h3><button class="faq-question" type="button" id="faq-question-2" aria-expanded="false" aria-controls="faq-answer-2"><span class="faq-question-text">How is the content checked for accuracy?</span><span class="faq-icon" aria-hidden="true"></span></button></h3>
+        <div class="faq-answer" id="faq-answer-2" role="region" aria-labelledby="faq-question-2" hidden>
+          <p>Notes, quizzes, flashcards, and practice questions are created using the A-level Computer Science specification as a guide. Content is reviewed carefully before it is published, but if you spot something that looks incorrect or unclear, please report it so it can be improved.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <h3><button class="faq-question" type="button" id="faq-question-3" aria-expanded="false" aria-controls="faq-answer-3"><span class="faq-question-text">Which exam boards does it support?</span><span class="faq-icon" aria-hidden="true"></span></button></h3>
+        <div class="faq-answer" id="faq-answer-3" role="region" aria-labelledby="faq-question-3" hidden>
+          <p>The content is designed around the core topics shared across A-level Computer Science courses, including programming, algorithms, data structures, computer systems, databases, networks, and legal and ethical issues. Always use your own exam board specification alongside the platform to make sure you cover every required detail.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <h3><button class="faq-question" type="button" id="faq-question-4" aria-expanded="false" aria-controls="faq-answer-4"><span class="faq-question-text">What do I get for £15?</span><span class="faq-icon" aria-hidden="true"></span></button></h3>
+        <div class="faq-answer" id="faq-answer-4" role="region" aria-labelledby="faq-question-4" hidden>
+          <p>A one-off £15 payment gives you lifetime access to all revision notes, topic quizzes, practice questions, flashcards, progress tracking, and future content updates. There are no subscriptions and no recurring charges.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <h3><button class="faq-question" type="button" id="faq-question-5" aria-expanded="false" aria-controls="faq-answer-5"><span class="faq-question-text">Can I try it before paying?</span><span class="faq-icon" aria-hidden="true"></span></button></h3>
+        <div class="faq-answer" id="faq-answer-5" role="region" aria-labelledby="faq-question-5" hidden>
+          <p>Yes — you can explore selected free revision resources and sample questions before upgrading. This lets you see whether the platform suits the way you revise before spending anything.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <h3><button class="faq-question" type="button" id="faq-question-6" aria-expanded="false" aria-controls="faq-answer-6"><span class="faq-question-text">Is this affiliated with my school, college, or exam board?</span><span class="faq-icon" aria-hidden="true"></span></button></h3>
+        <div class="faq-answer" id="faq-answer-6" role="region" aria-labelledby="faq-question-6" hidden>
+          <p>No — this is an independent revision platform. It is not produced, approved, or endorsed by any school, college, university, or exam board.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <h3><button class="faq-question" type="button" id="faq-question-7" aria-expanded="false" aria-controls="faq-answer-7"><span class="faq-question-text">Do you offer refunds?</span><span class="faq-icon" aria-hidden="true"></span></button></h3>
+        <div class="faq-answer" id="faq-answer-7" role="region" aria-labelledby="faq-question-7" hidden>
+          <p>Because the paid plan is a one-off payment that unlocks immediate digital access, purchases are normally non-refundable. Please try the free resources first to make sure the platform is right for you.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <h3><button class="faq-question" type="button" id="faq-question-8" aria-expanded="false" aria-controls="faq-answer-8"><span class="faq-question-text">Is payment secure?</span><span class="faq-icon" aria-hidden="true"></span></button></h3>
+        <div class="faq-answer" id="faq-answer-8" role="region" aria-labelledby="faq-question-8" hidden>
+          <p>Yes — payments are processed securely through Stripe. This website never sees or stores your card details.</p>
+        </div>
+      </div>
+    </div>
+
+    <aside class="ai-note" aria-labelledby="ai-note-title">
+      <h3 class="ai-note-title" id="ai-note-title">A note on AI-assisted content</h3>
+      <p class="ai-note-text">AI may be used to help draft and organise some revision material, allowing the platform to cover more topics faster. However, content is checked before it is published. If anything seems wrong, unclear, or out of date, report it — feedback helps make the resource better for every student.</p>
+    </aside>
+  </section>
+
   <footer>
-    Kernel — original questions, written to the OCR H446 specification.<br>
-    Not affiliated with or endorsed by OCR.
+    <div>Kernel</div>
+    <div>Made with <span role="img" aria-label="coffee">☕</span> by a former A-level Computer Science student.</div>
   </footer>
 
 </div>
+<script>
+  const faqButtons = document.querySelectorAll('.faq-question');
+
+  faqButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const shouldOpen = button.getAttribute('aria-expanded') !== 'true';
+
+      faqButtons.forEach((faqButton) => {
+        const isOpen = faqButton === button && shouldOpen;
+        const answer = document.getElementById(faqButton.getAttribute('aria-controls'));
+
+        faqButton.setAttribute('aria-expanded', String(isOpen));
+        answer.hidden = !isOpen;
+      });
+    });
+  });
+</script>
 </body>
 </html>
