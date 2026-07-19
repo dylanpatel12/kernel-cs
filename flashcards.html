@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kernel — flashcards</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .card-index{font-family:'IBM Plex Mono';font-size:11px;color:var(--text-faint);margin-bottom:10px;}
+  .flip-card{
+    background:var(--panel);border:1px solid var(--trace);border-radius:8px;
+    padding:48px 28px;min-height:180px;display:flex;align-items:center;justify-content:center;
+    text-align:center;cursor:pointer;margin-bottom:16px;user-select:none;
+  }
+  .flip-card:hover{border-color:var(--copper-dim);}
+  .flip-face{font-size:18px;line-height:1.6;}
+  .flip-face.term{font-family:'Space Grotesk';font-weight:600;font-size:20px;}
+  .flip-hint{font-family:'IBM Plex Mono';font-size:10.5px;color:var(--text-faint);text-align:center;margin-bottom:24px;}
+  .nav-row{display:flex;gap:10px;}
+  .nav-btn{
+    flex:1;font-family:'IBM Plex Mono';font-size:12.5px;padding:12px;border-radius:6px;cursor:pointer;
+    background:transparent;color:var(--text-dim);border:1px solid var(--trace);
+  }
+  .nav-btn:hover{border-color:var(--copper-dim);color:var(--text);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="brand-mark">K</div>
+      <div><div class="brand-name">Kernel</div><div class="brand-tag">Exam practice</div></div>
+    </div>
+    <div class="spec-tag">OCR H446</div>
+  </header>
+
+  <a class="back-link" id="back-link" href="home.html">&larr; back to module</a>
+  <div class="eyebrow" id="section-label"></div>
+  <h1 class="hero" id="topic-title"></h1>
+
+  <div class="card-index" id="card-index"></div>
+  <div class="flip-card" id="flip-card"><span class="flip-face term" id="flip-face"></span></div>
+  <div class="flip-hint">tap the card to flip</div>
+  <div class="nav-row">
+    <button class="nav-btn" id="prev-btn">&larr; previous</button>
+    <button class="nav-btn" id="next-btn">next &rarr;</button>
+  </div>
+
+  <footer>Kernel — original questions, written to the OCR H446 specification.<br>Not affiliated with or endorsed by OCR.</footer>
+</div>
+
+<script src="data.js"></script>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
+  const topic = code ? window.KERNEL_DATA[code] : null;
+
+  if(!topic){
+    window.location.href = 'coming-soon.html' + (code ? ('?topic=' + encodeURIComponent(code)) : '');
+  } else {
+    document.getElementById('back-link').href = 'topic.html?code=' + code;
+    document.getElementById('section-label').textContent = code + ' · ' + topic.section;
+    document.getElementById('topic-title').textContent = topic.title;
+    document.title = 'Kernel — ' + topic.title + ' flashcards';
+
+    let i = 0;
+    let showingBack = false;
+    const cards = topic.flashcards;
+
+    function render(){
+      document.getElementById('card-index').textContent = `Card ${i+1} of ${cards.length}`;
+      const face = document.getElementById('flip-face');
+      face.textContent = showingBack ? cards[i].back : cards[i].front;
+      face.className = showingBack ? 'flip-face' : 'flip-face term';
+    }
+
+    document.getElementById('flip-card').addEventListener('click', ()=>{
+      showingBack = !showingBack;
+      render();
+    });
+    document.getElementById('next-btn').addEventListener('click', ()=>{
+      i = (i + 1) % cards.length;
+      showingBack = false;
+      render();
+    });
+    document.getElementById('prev-btn').addEventListener('click', ()=>{
+      i = (i - 1 + cards.length) % cards.length;
+      showingBack = false;
+      render();
+    });
+
+    render();
+  }
+</script>
+</body>
+</html>

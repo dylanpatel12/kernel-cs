@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kernel — test</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .progress-track{height:4px;background:var(--trace);border-radius:2px;overflow:hidden;margin-bottom:24px;}
+  .progress-fill{height:100%;background:var(--copper);transition:width .3s ease;}
+  .q-index{font-family:'IBM Plex Mono';font-size:11px;color:var(--text-faint);margin-bottom:10px;}
+  .q-card{background:var(--panel);border:1px solid var(--trace);border-radius:8px;padding:24px 22px;margin-bottom:16px;}
+  .q-text{font-size:17px;line-height:1.5;margin-bottom:20px;}
+  .option{
+    display:flex;align-items:flex-start;gap:12px;width:100%;text-align:left;
+    background:var(--panel-raised);border:1px solid var(--trace);border-radius:6px;
+    padding:13px 14px;margin-bottom:9px;cursor:pointer;color:var(--text);font:inherit;font-size:14px;
+    transition:border-color .12s ease, background .12s ease;
+  }
+  .option:hover:not(:disabled){border-color:var(--copper-dim);}
+  .option:disabled{cursor:default;}
+  .option-letter{
+    font-family:'IBM Plex Mono';font-size:11px;color:var(--text-faint);
+    border:1px solid var(--trace);border-radius:4px;width:20px;height:20px;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;
+  }
+  .option.correct{border-color:var(--phosphor);background:var(--phosphor-dim);}
+  .option.correct .option-letter{border-color:var(--phosphor);color:var(--phosphor);}
+  .option.incorrect{border-color:var(--fault);background:var(--fault-dim);}
+  .option.incorrect .option-letter{border-color:var(--fault);color:var(--fault);}
+  .option.dimmed{opacity:0.45;}
+  .feedback{margin-top:6px;padding:16px 18px;border-radius:6px;border:1px solid var(--trace);background:var(--panel-raised);font-size:13.5px;line-height:1.6;color:var(--text-dim);}
+  .feedback-label{font-family:'IBM Plex Mono';font-size:11px;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;display:block;}
+  .feedback.ok .feedback-label{color:var(--phosphor);}
+  .feedback.bad .feedback-label{color:var(--fault);}
+  .next-btn{font-family:'IBM Plex Mono';font-size:13px;color:var(--bg);background:var(--copper);border:none;border-radius:6px;padding:12px 20px;cursor:pointer;width:100%;margin-top:14px;font-weight:500;}
+  .next-btn:hover{background:#f0b455;}
+  .hidden{display:none !important;}
+  .summary-score{text-align:center;padding:36px 20px;background:var(--panel);border:1px solid var(--trace);border-radius:8px;margin-bottom:20px;}
+  .summary-score .num{font-family:'Space Grotesk';font-size:44px;font-weight:600;color:var(--copper);}
+  .summary-score .frac{font-family:'IBM Plex Mono';font-size:13px;color:var(--text-dim);margin-top:4px;}
+  .summary-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--trace);font-size:13.5px;gap:12px;}
+  .summary-row:last-child{border-bottom:none;}
+  .summary-actions{display:flex;gap:10px;margin-top:20px;}
+  .summary-actions button{flex:1;font-family:'IBM Plex Mono';font-size:12.5px;padding:12px;border-radius:6px;cursor:pointer;}
+  .btn-primary{background:var(--copper);color:var(--bg);border:none;font-weight:500;}
+  .btn-primary:hover{background:#f0b455;}
+  .btn-ghost{background:transparent;color:var(--text-dim);border:1px solid var(--trace);}
+  .btn-ghost:hover{border-color:var(--copper-dim);color:var(--text);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="brand-mark">K</div>
+      <div><div class="brand-name">Kernel</div><div class="brand-tag">Exam practice</div></div>
+    </div>
+    <div class="spec-tag">OCR H446</div>
+  </header>
+
+  <a class="back-link" id="back-link" href="home.html">&larr; back to module</a>
+
+  <section id="screen-quiz">
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <div class="q-index" id="q-index"></div>
+    <div class="q-card">
+      <div class="q-text" id="q-text"></div>
+      <div id="options"></div>
+      <div class="feedback hidden" id="feedback">
+        <span class="feedback-label" id="feedback-label"></span>
+        <span id="feedback-text"></span>
+      </div>
+    </div>
+    <button class="next-btn hidden" id="next-btn">Next question &rarr;</button>
+  </section>
+
+  <section id="screen-summary" class="hidden">
+    <div class="summary-score">
+      <div class="num" id="score-num">0%</div>
+      <div class="frac" id="score-frac">0 / 0 correct</div>
+    </div>
+    <div id="summary-breakdown"></div>
+    <div class="summary-actions">
+      <button class="btn-ghost" id="retry-btn">Retry test</button>
+      <button class="btn-primary" id="hub-btn">Back to module</button>
+    </div>
+  </section>
+
+  <footer>Kernel — original questions, written to the OCR H446 specification.<br>Not affiliated with or endorsed by OCR.</footer>
+</div>
+
+<script src="data.js"></script>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
+  const topic = code ? window.KERNEL_DATA[code] : null;
+
+  if(!topic){
+    window.location.href = 'coming-soon.html' + (code ? ('?topic=' + encodeURIComponent(code)) : '');
+  } else {
+    document.getElementById('back-link').href = 'topic.html?code=' + code;
+    document.title = 'Kernel — ' + topic.title + ' test';
+
+    let state = { i:0, score:0, answered:false, log:[] };
+    const set = topic.questions;
+
+    const screens = { quiz: document.getElementById('screen-quiz'), summary: document.getElementById('screen-summary') };
+    function show(name){ Object.values(screens).forEach(s=>s.classList.add('hidden')); screens[name].classList.remove('hidden'); window.scrollTo({top:0,behavior:'smooth'}); }
+
+    function renderQuestion(){
+      const q = set[state.i];
+      state.answered = false;
+      document.getElementById('q-index').textContent = `${topic.title} · question ${state.i+1} of ${set.length}`;
+      document.getElementById('progress-fill').style.width = `${(state.i/set.length)*100}%`;
+      document.getElementById('q-text').textContent = q.q;
+
+      const optionsEl = document.getElementById('options');
+      optionsEl.innerHTML = '';
+      const letters = ['A','B','C','D'];
+      q.options.forEach((opt, idx)=>{
+        const b = document.createElement('button');
+        b.className = 'option';
+        b.innerHTML = `<span class="option-letter">${letters[idx]}</span><span>${opt}</span>`;
+        b.addEventListener('click', ()=> selectAnswer(idx));
+        optionsEl.appendChild(b);
+      });
+      document.getElementById('feedback').classList.add('hidden');
+      document.getElementById('next-btn').classList.add('hidden');
+    }
+
+    function selectAnswer(idx){
+      if(state.answered) return;
+      state.answered = true;
+      const q = set[state.i];
+      const correct = idx === q.correct;
+      if(correct) state.score++;
+      state.log.push({q:q.q, correct});
+
+      const opts = document.querySelectorAll('.option');
+      opts.forEach((el,i)=>{
+        el.disabled = true;
+        if(i === q.correct) el.classList.add('correct');
+        else if(i === idx) el.classList.add('incorrect');
+        else el.classList.add('dimmed');
+      });
+
+      const fb = document.getElementById('feedback');
+      fb.classList.remove('hidden');
+      fb.classList.toggle('ok', correct);
+      fb.classList.toggle('bad', !correct);
+      document.getElementById('feedback-label').textContent = correct ? 'Correct' : 'Not quite';
+      document.getElementById('feedback-text').textContent = q.explain;
+
+      const nextBtn = document.getElementById('next-btn');
+      nextBtn.classList.remove('hidden');
+      nextBtn.textContent = (state.i+1 < set.length) ? 'Next question →' : 'See results →';
+    }
+
+    document.getElementById('next-btn').addEventListener('click', ()=>{
+      if(state.i+1 < set.length){ state.i++; renderQuestion(); }
+      else { renderSummary(); show('summary'); }
+    });
+
+    function renderSummary(){
+      const total = set.length;
+      const pct = Math.round((state.score/total)*100);
+      document.getElementById('score-num').textContent = `${pct}%`;
+      document.getElementById('score-frac').textContent = `${state.score} / ${total} correct`;
+      const breakdown = document.getElementById('summary-breakdown');
+      breakdown.innerHTML = '';
+      state.log.forEach((entry,i)=>{
+        const row = document.createElement('div');
+        row.className = 'summary-row';
+        row.innerHTML = `<span style="color:var(--text-dim);">${i+1}. ${entry.q}</span>
+          <span style="font-family:'IBM Plex Mono'; font-size:11px; color:${entry.correct ? 'var(--phosphor)' : 'var(--fault)'}; flex-shrink:0;">${entry.correct ? 'correct' : 'missed'}</span>`;
+        breakdown.appendChild(row);
+      });
+    }
+
+    document.getElementById('retry-btn').addEventListener('click', ()=>{
+      state = { i:0, score:0, answered:false, log:[] };
+      renderQuestion();
+      show('quiz');
+    });
+    document.getElementById('hub-btn').addEventListener('click', ()=>{
+      window.location.href = 'topic.html?code=' + code;
+    });
+
+    renderQuestion();
+  }
+</script>
+</body>
+</html>
