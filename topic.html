@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kernel — module</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .format-grid{display:flex;flex-direction:column;gap:10px;margin-top:8px;}
+  .format-card{
+    background:var(--panel);border:1px solid var(--trace);border-radius:8px;
+    padding:20px 20px;display:flex;align-items:center;gap:16px;text-decoration:none;color:inherit;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .format-card:hover{border-color:var(--copper-dim);background:var(--panel-raised);}
+  .format-icon{
+    width:40px;height:40px;border:1px solid var(--copper-dim);border-radius:6px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono';font-size:15px;color:var(--copper);
+  }
+  .format-title{font-family:'Space Grotesk';font-size:16px;font-weight:600;margin-bottom:2px;}
+  .format-desc{font-size:13px;color:var(--text-dim);}
+  .format-meta{margin-left:auto;font-family:'IBM Plex Mono';font-size:11px;color:var(--text-faint);white-space:nowrap;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="brand-mark">K</div>
+      <div><div class="brand-name">Kernel</div><div class="brand-tag">Exam practice</div></div>
+    </div>
+    <div class="spec-tag">OCR H446</div>
+  </header>
+
+  <a class="back-link" href="index.html">&larr; back to module map</a>
+  <div class="eyebrow" id="section-label">Loading…</div>
+  <h1 class="hero" id="topic-title"></h1>
+  <p class="hero-sub">Pick a format. Come back to any of these as often as you like — nothing here is timed unless you're in a test.</p>
+
+  <div class="format-grid" id="format-grid"></div>
+
+  <footer>Kernel — original questions, written to the OCR H446 specification.<br>Not affiliated with or endorsed by OCR.</footer>
+</div>
+
+<script src="data.js"></script>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
+  const topic = code ? window.KERNEL_DATA[code] : null;
+
+  if(!topic){
+    window.location.href = 'coming-soon.html' + (code ? ('?topic=' + encodeURIComponent(code)) : '');
+  } else {
+    document.getElementById('section-label').textContent = code + ' · ' + topic.section;
+    document.getElementById('topic-title').textContent = topic.title;
+    document.title = 'Kernel — ' + topic.title;
+
+    const formats = [
+      { key:'notes', icon:'N', title:'Notes', desc:'Read a summary before you test yourself.', meta:topic.notes.length + ' sections', href:'notes.html?code=' + code },
+      { key:'flashcards', icon:'F', title:'Flashcards', desc:'Flip through key terms and definitions.', meta:topic.flashcards.length + ' cards', href:'flashcards.html?code=' + code },
+      { key:'test', icon:'T', title:'Test questions', desc:'Auto-marked questions with full explanations.', meta:topic.questions.length + ' questions', href:'test.html?code=' + code }
+    ];
+    const grid = document.getElementById('format-grid');
+    formats.forEach(f=>{
+      const a = document.createElement('a');
+      a.className = 'format-card';
+      a.href = f.href;
+      a.innerHTML = `
+        <span class="format-icon">${f.icon}</span>
+        <span>
+          <span class="format-title">${f.title}</span><br>
+          <span class="format-desc">${f.desc}</span>
+        </span>
+        <span class="format-meta">${f.meta}</span>`;
+      grid.appendChild(a);
+    });
+  }
+</script>
+</body>
+</html>
